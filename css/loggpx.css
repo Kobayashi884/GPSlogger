@@ -1,0 +1,13 @@
+/* マップとグラフの高さ調整 */
+#map {
+  height: 250px;
+  width: 100%;
+  border-radius: 0px;
+}
+#chart {
+  height: 250px;
+  width: 100%;
+}
+body {
+  margin-bottom: 60px; /* フッターメニュー分の余白 */
+}
