@@ -18,6 +18,11 @@
     <!-- マップ表示用ライブラリleaflet -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <!-- 軌跡再生用プラグイン -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.1/dist/leaflet.timedimension.control.min.css"
+    />
     <!-- css読み込み -->
     <link rel="stylesheet" href="css/loggpx.css" />
   </head>
@@ -82,7 +87,10 @@
           <div>🗺️</div>
           <small>軌跡</small>
         </a>
-        <a href="graph.html" class="text-center text-decoration-none text-dark">
+        <a
+          href="esp32wifi.html"
+          class="text-center text-decoration-none text-dark"
+        >
           <div>📊</div>
           <small>グラフ</small>
         </a>
@@ -90,6 +98,9 @@
     </nav>
     <!-- gpxparser.jsよみこみ -->
     <script src="js/gpxparser.min.js"></script>
+    <!-- timedimension読み込み -->
+    <script src="https://cdn.jsdelivr.net/npm/iso8601-js-period@0.2.1/iso8601.min.js"></script>
+    <script src="https://unpkg.com/leaflet-timedimension/dist/leaflet.timedimension.min.js"></script>
     <script src="js/map.js"></script>
     <script src="js/gpx.js"></script>
     <script src="js/chart.js"></script>
