@@ -1,4 +1,4 @@
-fetch("/list")
+fetch("http://192.168.4.1/list")
   .then((res) => res.json())
   .then((data) => {
     const list = document.getElementById("list");
@@ -26,3 +26,4 @@ fetch("/list")
     document.getElementById("list").innerHTML =
       "ERROR loading list…<br>" + error;
   });
+
