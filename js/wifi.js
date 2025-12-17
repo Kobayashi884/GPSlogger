@@ -1,29 +1,27 @@
-fetch("http://192.168.4.1/list")
-  .then((res) => res.json())
-  .then((data) => {
-    const list = document.getElementById("list");
-    list.innerHTML = "";
+document.getElementById("loadBtn").onclick = () => {
+  document.getElementById("status").textContent = "Loading...";
 
-    if (!data.length) {
-      list.innerHTML = "No files found.";
-      return;
-    }
+  fetch("http://192.168.4.1/list")
+    .then((res) => res.json())
+    .then((data) => {
+      const list = document.getElementById("list");
+      list.innerHTML = "";
 
-    data.forEach((path) => {
-      const div = document.createElement("div");
-      div.className = "item";
+      if (!data.length) {
+        list.textContent = "No files found.";
+        return;
+      }
 
-      div.textContent = path;
+      data.forEach((path) => {
+        const div = document.createElement("div");
+        div.className = "item";
+        div.textContent = path;
+        list.appendChild(div);
+      });
 
-      div.onclick = () => {
-        window.location = "/download?file=" + encodeURIComponent(path);
-      };
-
-      list.appendChild(div);
+      document.getElementById("status").textContent = "✔ loaded";
+    })
+    .catch((err) => {
+      document.getElementById("status").innerHTML = "❌ failed:<br>" + err;
     });
-  })
-  .catch((error) => {
-    document.getElementById("list").innerHTML =
-      "ERROR loading list…<br>" + error;
-  });
-
+};
