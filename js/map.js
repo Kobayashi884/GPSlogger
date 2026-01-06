@@ -32,7 +32,7 @@ const map = L.map("map", {
   timeDimension: true,
   timeDimensionControl: true,
   timeDimensionControlOptions: {
-    autoPlay: true,
+    autoPlay: false,
     loop: true,
     timeSliderDragUpdate: true,
     playerOptions: {
@@ -55,17 +55,55 @@ L.tileLayer(
   }
 ).addTo(map);
 
-const colors = ["red", "blue", "green"];
-// Polylineで線を描画
-for (let i = 0; lapsArray.length - 1 > i; i++) {
-  const polyline = L.polyline(laps[i + 1], {
-    color: colors[i % colors.length],
+const colors = [
+  "red",
+  "blue",
+  "green",
+  "orange",
+  "purple",
+  "yellow",
+  "cyan",
+  "magenta",
+  "brown",
+  "pink",
+];
+
+//ラップ選択用配列
+const lapPolylines = {};
+
+function showlap(lapIndex) {
+  const polyline = L.polyline(laps[lapIndex], {
+    color: colors[(lapIndex - 1) % colors.length],
     weight: 3,
     opacity: 0.8,
   }).addTo(map);
+
   // 軌跡全体が見えるようにズーム調整
   map.fitBounds(polyline.getBounds());
+
+  //削除用にpolylineのデータを保存する
+  lapPolylines[lapIndex] = polyline;
 }
+
+//初めのみ描写
+showlap(1);
+
+//削除用の関数
+function delelap(lapIndex) {
+  map.removeLayer(lapPolylines[lapIndex]);
+  delete lapPolylines[lapIndex];
+}
+// // Polylineで線を描画 ここのpolylineのlaps[]を変えると軌跡も変わる
+// for (let i = 0; lapsArray.length - 1 > i; i++) {
+//   const polyline = L.polyline(laps[i + 1], {
+//     color: colors[i % colors.length],
+//     weight: 3,
+//     opacity: 0.8,
+//   }).addTo(map);
+//   // 軌跡全体が見えるようにズーム調整
+//   map.fitBounds(polyline.getBounds());
+// }
+
 // --- TimeDimension用GeoJSONに変換 ---
 function convertToTimeGeoJSON(lapsArray, baseDate = "2025-01-01T00:00:00Z") {
   const base = new Date(baseDate);
@@ -105,26 +143,88 @@ function convertToTimeGeoJSON(lapsArray, baseDate = "2025-01-01T00:00:00Z") {
 }
 
 const geojson = convertToTimeGeoJSON(lapsArray);
-console.log(geojson.lap1);
-// --- GeoJSONレイヤー ---
-const geoLayer = L.geoJSON(geojson.lap3, {
-  pointToLayer: function (feature, latlng) {
-    return L.circleMarker(latlng, {
-      radius: 2,
-      color: "yellow",
-      weight: 1,
-      fillOpacity: 1,
+
+//ラップごとのTimeDimensionLayerを保存
+// let count = [1];
+
+// function showLapscount(x) {
+//   count.push(x);
+//   console.log(count);
+//   for (let i = 0; i < count.length; i++) {
+//     showLapsAnimation(count[i]);
+//   }
+// }
+
+// //グラフ用配列削除
+// function showLapscountdel(x) {
+//   // x と一致する要素を削除
+//   count = count.filter((num) => num !== x);
+// }
+
+function showLapsAnimation(lapIndex) {
+  // table の tr が選択されているか確認
+  const tr = document.querySelector(
+    `#summaryTable tbody tr:nth-child(${lapIndex})`
+  );
+
+  const geoLayer = L.geoJSON(geojson[`lap${lapIndex}`], {
+    pointToLayer: function (feature, latlng) {
+      return L.circleMarker(latlng, {
+        radius: 2,
+        color: "yellow",
+        weight: 1,
+        fillOpacity: 1,
+      });
+    },
+  });
+
+  const tdLayer = L.timeDimension.layer.geoJson(geoLayer, {
+    updateTimeDimension: true,
+    duration: "PT0S",
+    updateTimeDimensionMode: "replace",
+    addlastPoint: false,
+  });
+
+  tdLayer.addTo(map);
+}
+
+// }
+
+// // --- GeoJSONレイヤー ---
+// //geojsonのlapを変えることでラップのアニメーションするのを変えれる
+// const geoLayer = L.geoJSON(geojson.lap2, {
+//   pointToLayer: function (feature, latlng) {
+//     return L.circleMarker(latlng, {
+//       radius: 2,
+//       color: "yellow",
+//       weight: 1,
+//       fillOpacity: 1,
+//     });
+//   },
+// });
+
+// // --- TimeDimensionレイヤー（アニメーション） ---
+// const tdLayer = L.timeDimension.layer.geoJson(geoLayer, {
+//   updateTimeDimension: true,
+//   duration: "PT0S",
+//   updateTimeDimensionMode: "replace",
+//   addlastPoint: false,
+// });
+
+let timeLabels = []; // DOMContentLoaded の外、グローバルに宣言
+
+document.addEventListener("DOMContentLoaded", () => {
+  const ctx = document.getElementById("chart").getContext("2d");
+  // 初期化コード
+  // timeLabels に値をセット
+  Object.keys(laps)
+    .slice(0, -1)
+    .forEach((lapNum, i) => {
+      const lapPoints = laps[lapNum];
+      if (i === 0) timeLabels = lapPoints.map((p) => p.lapTime.slice(0, -3));
     });
-  },
 });
 
-// --- TimeDimensionレイヤー（アニメーション） ---
-const tdLayer = L.timeDimension.layer.geoJson(geoLayer, {
-  updateTimeDimension: true,
-  duration: "PT0S",
-  updateTimeDimensionMode: "replace",
-  addlastPoint: false,
-});
-
-// --- 地図に追加 ---
-tdLayer.addTo(map);
+// --- 地図にアニメーション用点を追加 ---
+// tdLayer.addTo(map);
+showLapsAnimation(1);

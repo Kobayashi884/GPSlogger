@@ -3,6 +3,7 @@ document.getElementById("gpxlog").addEventListener("change", async (e) => {
   if (!file) return;
 
   const text = await file.text();
+  //ローカルストレージに元のgpxデータを保存する
   localStorage.setItem("gpxData", text);
   localStorage.setItem("gpxFileName", file.name);
   console.log(file.name);
@@ -11,7 +12,7 @@ document.getElementById("gpxlog").addEventListener("change", async (e) => {
   const gpx = new gpxParser();
   gpx.parse(text);
 
-  // パース後のpointsを取得
+  // パース後のpointsを取得（一回の走行でラップ数などもとっているためトラックは初回のみ）
   const points = gpx.tracks[0].points;
 
   // 読み取れない追加情報(speed, lap, lapTime, hdop)をXMLから抽出
@@ -39,6 +40,7 @@ document.getElementById("gpxlog").addEventListener("change", async (e) => {
   // Chart.js用に保存（配列をJSONに変換）
   localStorage.setItem("pointsData", JSON.stringify(points));
   const laps = {};
+
   // lapごとに分ける
   for (let i = 0; i < points.length; i++) {
     const lap = points[i].lap;

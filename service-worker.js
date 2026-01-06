@@ -3,9 +3,10 @@ var CACHE_NAME = "datalogger-v1";
 var FILES_TO_CACHE = [
   "/",
   "/index.html",
-  "/css/style.css",
-  "/js/app.js",
-  "/js/db.js",
+  "/loggpx.html",
+  "/esp32wifi.html",
+  "/css",
+  "/js",
   "/manifest.json",
 ];
 

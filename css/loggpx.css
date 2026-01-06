@@ -2,7 +2,7 @@
 #map {
   height: 250px;
   width: 100%;
-  border-radius: 0px;
+  border-radius: 10px;
 }
 #chart {
   height: 250px;
@@ -10,4 +10,14 @@
 }
 body {
   margin-bottom: 60px; /* フッターメニュー分の余白 */
+}
+
+.leaflet-bar.leaflet-bar-horizontal.leaflet-bar-timecontrol.leaflet-control {
+  display: flex;
+}
+.leaflet-control-timecontrol.timecontrol-date {
+  display: none;
+}
+.leaflet-control-timecontrol.timecontrol-slider.timecontrol-speed {
+  display: none;
 }
